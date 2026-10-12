@@ -13,9 +13,7 @@ app.use(express.json());
 // Welcome & health check route
 app.get('/', (req, res) => {
     res.status(200).json({
-        message: 'Welcome to the E-Commerce REST API (Week 1)',
-        main_resource: '/products',
-        status: 'online'
+        message: 'Welcome to the ecommerce API'
     });
 });
 

@@ -8,7 +8,7 @@ describe('Week 1 Core CRUD Endpoints: Products Entity', () => {
     test('GET / - returns welcome message and status 200', async () => {
         const res = await request(app).get('/');
         expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty('main_resource', '/products');
+        expect(res.body).toEqual({ message: 'Welcome to the ecommerce API' });
     });
 
     test('POST /products - fails with 400 when required fields are missing', async () => {
