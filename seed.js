@@ -1,5 +1,5 @@
 require('dotenv').config();
-const db = require('./db');
+const db = require('./src/config/db');
 
 const seedData = async () => {
     try {
