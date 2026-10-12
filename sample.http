@@ -1,0 +1,78 @@
+### E-Commerce API Request Collection
+### You can run these using VS Code Rest Client or Postman
+
+@baseUrl = http://localhost:3000
+
+### 1. Root / Health Check
+GET {{baseUrl}}/
+
+### 2. Register New User
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "full_name": "John Doe",
+  "username": "johndoe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### 3. Login User
+# @name login
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### Store token from response:
+@authToken = {{login.response.body.token}}
+
+### 4. Get Users (Paginated)
+GET {{baseUrl}}/users?page=1&limit=5
+
+### 5. Get User By ID
+GET {{baseUrl}}/users/1
+
+### 6. Create Product (Requires Token)
+# @name createProduct
+POST {{baseUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Wireless Mechanical Keyboard",
+  "description": "75% compact keyboard with Bluetooth 5.0",
+  "price": 89.99,
+  "stock": 15
+}
+
+### 7. Get All Products (Paginated)
+GET {{baseUrl}}/products?page=1&limit=10
+
+### 8. Get Product By ID
+GET {{baseUrl}}/products/1
+
+### 9. Place Order (Requires Token)
+POST {{baseUrl}}/orders
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "product_id": 1,
+  "quantity": 1
+}
+
+### 10. Get All Orders (Paginated)
+GET {{baseUrl}}/orders?page=1&limit=10
+
+### 11. Update Order Status (Requires Token)
+PUT {{baseUrl}}/orders/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "paid"
+}
