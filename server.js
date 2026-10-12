@@ -2,9 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
-const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
@@ -14,13 +12,14 @@ app.use(express.json());
 
 // Welcome route
 app.get('/', (req, res) => {
-    res.json({ message: 'Welcome to the ecommerce API' });
+    res.json({
+        message: 'Welcome to the E-Commerce API (Week 1)',
+        main_resource: '/products'
+    });
 });
 
-// Main resource routes
-app.use('/users', userRoutes);
+// Week 1 Core Entity Routes
 app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
 
 // Catch 404 for unknown routes
 app.use((req, res) => {

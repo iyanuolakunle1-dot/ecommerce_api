@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const verifyToken = require('../middleware/auth');
 
 // 1. CREATE PRODUCT (Week 1 Core CRUD)
 router.post('/', async (req, res) => {

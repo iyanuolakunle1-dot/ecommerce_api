@@ -1,42 +1,12 @@
-### E-Commerce API Request Collection
-### You can run these using VS Code Rest Client or Postman
+### E-Commerce API - Week 1 Core CRUD Requests
+### Test with VS Code REST Client or Postman
 
 @baseUrl = http://localhost:3000
 
-### 1. Root / Health Check
+### 1. Root / Health Check (200 OK)
 GET {{baseUrl}}/
 
-### 2. Register New User
-POST {{baseUrl}}/users/register
-Content-Type: application/json
-
-{
-  "full_name": "John Doe",
-  "username": "johndoe",
-  "email": "john@example.com",
-  "password": "password123"
-}
-
-### 3. Login User
-# @name login
-POST {{baseUrl}}/users/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-
-### Store token from response:
-@authToken = {{login.response.body.token}}
-
-### 4. Get Users (Paginated)
-GET {{baseUrl}}/users?page=1&limit=5
-
-### 5. Get User By ID
-GET {{baseUrl}}/users/1
-
-### 6. Create Product (Week 1 Core CRUD)
+### 2. Create Product (201 Created)
 POST {{baseUrl}}/products
 Content-Type: application/json
 
@@ -47,30 +17,31 @@ Content-Type: application/json
   "stock": 15
 }
 
-### 7. Get All Products (Paginated)
+### 3. Create Product - Validation Failure (400 Bad Request)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "description": "Missing name and price"
+}
+
+### 4. Get All Products with Pagination (200 OK)
 GET {{baseUrl}}/products?page=1&limit=10
 
-### 8. Get Product By ID
+### 5. Get Single Product by ID (200 OK)
 GET {{baseUrl}}/products/1
 
-### 9. Place Order (Requires Token)
-POST {{baseUrl}}/orders
-Authorization: Bearer {{authToken}}
+### 6. Get Non-existent Product (404 Not Found)
+GET {{baseUrl}}/products/9999
+
+### 7. Update Product (200 OK)
+PUT {{baseUrl}}/products/1
 Content-Type: application/json
 
 {
-  "product_id": 1,
-  "quantity": 1
+  "price": 79.99,
+  "stock": 20
 }
 
-### 10. Get All Orders (Paginated)
-GET {{baseUrl}}/orders?page=1&limit=10
-
-### 11. Update Order Status (Requires Token)
-PUT {{baseUrl}}/orders/1
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "status": "paid"
-}
+### 8. Delete Product (200 OK)
+DELETE {{baseUrl}}/products/1
