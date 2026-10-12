@@ -71,21 +71,18 @@ describe('E-commerce API Integration Tests', () => {
         });
     });
 
-    // --- PRODUCTS ---
+    // --- PRODUCTS (Week 1 Core CRUD) ---
     describe('Products Endpoints', () => {
-        test('POST /products - rejects without auth token', async () => {
+        test('POST /products - fails with missing required fields', async () => {
             const res = await request(app).post('/products').send({
-                name: 'Laptop Stand',
-                price: 25.00,
-                stock: 10
+                description: 'Missing name and price'
             });
-            expect(res.statusCode).toBe(401);
+            expect(res.statusCode).toBe(400);
         });
 
-        test('POST /products - creates product with valid token', async () => {
+        test('POST /products - creates product successfully', async () => {
             const res = await request(app)
                 .post('/products')
-                .set('Authorization', `Bearer ${token}`)
                 .send({
                     name: 'Ergonomic Desk Mat',
                     description: 'Large smooth felt desk mat',
@@ -110,10 +107,9 @@ describe('E-commerce API Integration Tests', () => {
             expect(res.body.id).toBe(productId);
         });
 
-        test('PUT /products/:id - updates product with token', async () => {
+        test('PUT /products/:id - updates product (Week 1 Core CRUD)', async () => {
             const res = await request(app)
                 .put(`/products/${productId}`)
-                .set('Authorization', `Bearer ${token}`)
                 .send({
                     price: 29.99
                 });

@@ -36,10 +36,8 @@ GET {{baseUrl}}/users?page=1&limit=5
 ### 5. Get User By ID
 GET {{baseUrl}}/users/1
 
-### 6. Create Product (Requires Token)
-# @name createProduct
+### 6. Create Product (Week 1 Core CRUD)
 POST {{baseUrl}}/products
-Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {

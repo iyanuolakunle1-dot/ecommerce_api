@@ -3,8 +3,8 @@ const router = express.Router();
 const db = require('../db');
 const verifyToken = require('../middleware/auth');
 
-// 1. CREATE PRODUCT (Protected)
-router.post('/', verifyToken, async (req, res) => {
+// 1. CREATE PRODUCT (Week 1 Core CRUD)
+router.post('/', async (req, res) => {
     try {
         const { name, description, price, stock } = req.body;
 
@@ -73,8 +73,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// 4. UPDATE PRODUCT (Protected)
-router.put('/:id', verifyToken, async (req, res) => {
+// 4. UPDATE PRODUCT (Week 1 Core CRUD)
+router.put('/:id', async (req, res) => {
     try {
         const { name, description, price, stock } = req.body;
 
@@ -105,8 +105,8 @@ router.put('/:id', verifyToken, async (req, res) => {
     }
 });
 
-// 5. DELETE PRODUCT (Protected)
-router.delete('/:id', verifyToken, async (req, res) => {
+// 5. DELETE PRODUCT (Week 1 Core CRUD)
+router.delete('/:id', async (req, res) => {
     try {
         const check = await db.query('SELECT id FROM products WHERE id = ?', [req.params.id]);
         if (check.rows.length === 0) {
