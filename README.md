@@ -1,65 +1,66 @@
-# E-Commerce REST API (Week 1: Core CRUD)
+# E-Commerce Inventory & Order API (Week 1)
 
-> A modular monolithic RESTful API built with **Node.js**, **Express**, and **SQLite**. Designed for an e-commerce platform managing product inventories for small merchants.
+A modular REST API built with Node.js, Express, and PostgreSQL for small retail merchants to catalog products and manage inventory.
 
-**Live Deployed URL**: [https://ecommerce-api-6abw.onrender.com](https://ecommerce-api-6abw.onrender.com)  
-**GitHub Repository**: [https://github.com/iyanuolakunle1-dot/ecommerce_api](https://github.com/iyanuolakunle1-dot/ecommerce_api)  
-**Release Tag**: `week-1`
-
----
-
-## 📌 Problem & Target User
-
-- **Target User**: Small online retail store owners and independent merchants.
-- **Problem Solved**: Small merchants struggle with manual spreadsheets and messy notes, leading to accidental overselling, stockout disputes, and inventory discrepancies.
-- **Pain Removed**: Provides a fast, automated API to reliably catalog products, maintain accurate inventory stock counts, and safely execute CRUD operations.
-- **Full Week 1 Package**: See [WEEK1_SUBMISSION.md](WEEK1_SUBMISSION.md) for the Idea One-Pager, Work Plan, ERD diagram, and 5-minute presentation script.
+- **GitHub Repository**: [https://github.com/iyanuolakunle1-dot/ecommerce_api](https://github.com/iyanuolakunle1-dot/ecommerce_api)
+- **Live Deployed API**: [https://ecommerce-api-6abw.onrender.com](https://ecommerce-api-6abw.onrender.com)
+- **Release Tag**: `week-1`
 
 ---
 
-## 🏛️ Architecture: Modular Monolith
+## Documentation
 
-This project adheres to a **modular monolithic architecture** designed for high cohesion, separation of concerns, and effortless future expansion:
+All Week 1 submission deliverables are organized in the [`/docs`](docs) directory:
+
+- [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Problem, target user, 3 entities, core flow, scope, and top 3 risks.
+- [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigations.
+- [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schemas, ERD diagram, and endpoint contracts.
+- [Task 1.2: Presentation Guide](docs/PRESENTATION_GUIDE.md): 5-minute mentor walkthrough script and live demo steps.
+- [Weekly Update Note](docs/WEEK1_UPDATE_NOTE.md): Formatted submission note.
+
+---
+
+## Tech Stack & Architecture
+
+- **Runtime**: Node.js (v18+)
+- **Framework**: Express.js
+- **Database**: PostgreSQL (via `pg` connection pool)
+- **Architecture**: Modular Monolith
 
 ```text
 ecommerce_stage1/
+├── docs/                      # Week 1 documentation & submission files
+│   ├── IDEA_ONE_PAGER.md
+│   ├── WORK_PLAN.md
+│   ├── DATA_MODEL_AND_API_SPEC.md
+│   ├── PRESENTATION_GUIDE.md
+│   └── WEEK1_UPDATE_NOTE.md
 ├── src/
 │   ├── config/
-│   │   └── db.js                 # Database connection & schema migration manager
+│   │   └── db.js              # PostgreSQL pool & table initialization
 │   └── modules/
-│       └── products/             # Main Product domain module (Week 1)
-│           ├── product.repository.js   # Direct database queries & data access layer
-│           ├── product.service.js      # Business rules & input validation layer
-│           ├── product.controller.js   # HTTP request parsing & response serialization
-│           └── product.routes.js       # Express route definitions
+│       └── products/          # Products domain module (Week 1 Core Entity)
+│           ├── product.repository.js  # SQL queries (pg)
+│           ├── product.service.js     # Validation & business logic
+│           ├── product.controller.js  # HTTP request/response handlers
+│           └── product.routes.js      # Express route definitions
 ├── tests/
-│   └── api.test.js               # Supertest integration tests for Week 1 endpoints
-├── .env.example                  # Environment configuration template
-├── ecommerce.sqlite              # Zero-setup local SQLite database
-├── package.json                  # Dependencies & scripts
-├── sample.http                   # Executable REST client requests
-├── seed.js                       # Dummy test data seeder
-├── server.js                     # Monolith application entry point
-└── WEEK1_SUBMISSION.md           # Formal Week 1 submission deliverable document
+│   └── api.test.js            # Integration test suite (Supertest)
+├── .env.example               # Environment variables template
+├── package.json
+├── sample.http                # Executable HTTP requests
+├── schema.sql                 # PostgreSQL DDL table definitions
+├── seed.js                    # Dummy catalog data seeder
+└── server.js                  # Application entry point
 ```
 
 ---
 
-## 🗄️ Entities & Data Model (Week 1 Design)
-
-The 3-week design includes 3 related entities:
-
-1. **Users (`users`)**: Merchant & customer accounts (Planned for Week 2).
-2. **Products (`products`)**: **Main entity built in Week 1** — catalog items, descriptions, prices, and stock counts.
-3. **Orders (`orders`)**: Relational junction connecting users and products (Planned for Week 2).
-
----
-
-## 🚀 Getting Started
+## Local Setup Guide
 
 ### 1. Prerequisites
-- **Node.js** (v18+)
-- **Zero external database installation required**: Runs entirely on local SQLite (`ecommerce.sqlite`).
+- Node.js (v18 or higher)
+- PostgreSQL (local instance or cloud database such as Supabase / Render / Neon)
 
 ### 2. Install Dependencies
 ```bash
@@ -67,76 +68,81 @@ npm install
 ```
 
 ### 3. Environment Configuration
-Create or verify your `.env` file:
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Update `DATABASE_URL` with your PostgreSQL credentials:
 ```env
 PORT=3000
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ecommerce_db
 ```
 
-### 4. Seed Dummy Data
-Populate the database with sample products:
+### 4. Create Tables & Seed Data
+You can initialize the schema using `schema.sql` or run the seed script which initializes the table and inserts sample records:
 ```bash
-node seed.js
+# Seed sample catalog items
+npm run seed
 ```
 
 ### 5. Start the Server
 ```bash
 # Production mode
-node server.js
+npm start
 
-# Development mode (with live reload)
-npx nodemon server.js
+# Development mode (auto-reload)
+npm run dev
 ```
 The server will start listening at `http://localhost:3000`.
 
-### 6. Run Automated Tests
-Execute the automated test suite verifying all CRUD operations and HTTP status codes (`201`, `200`, `400`, `404`):
+### 6. Run Tests
 ```bash
 npm test
 ```
 
 ---
 
-## 📖 Week 1 Core CRUD Endpoints (`/products`)
+## Core CRUD Endpoints (`/products`)
 
-| Method | Endpoint | Purpose | Request Body | Response Status Codes |
-|---|---|---|---|---|
-| `GET` | `/` | API status & welcome check | None | `200 OK` |
-| `POST` | `/products` | Create a new product | `{"name": "Mouse", "price": 29.99, "stock": 20}` | `201 Created`<br>`400 Bad Request` |
-| `GET` | `/products?page=1&limit=10` | List products with pagination | None | `200 OK` |
-| `GET` | `/products/:id` | Get single product by ID | None | `200 OK`<br>`404 Not Found` |
-| `PUT` | `/products/:id` | Update product details | `{"price": 24.99, "stock": 18}` | `200 OK`<br>`400 Bad Request`<br>`404 Not Found` |
-| `DELETE` | `/products/:id` | Delete product by ID | None | `200 OK`<br>`404 Not Found` |
+| Method | Endpoint | Purpose | Status Codes |
+|---|---|---|---|
+| `GET` | `/` | API Health & Welcome | `200 OK` |
+| `POST` | `/products` | Create a new product | `201 Created`, `400 Bad Request` |
+| `GET` | `/products?page=1&limit=10` | List products (paginated) | `200 OK` |
+| `GET` | `/products/:id` | Get single product by ID | `200 OK`, `400 Bad Request`, `404 Not Found` |
+| `PUT` | `/products/:id` | Update product details | `200 OK`, `400 Bad Request`, `404 Not Found` |
+| `DELETE` | `/products/:id` | Delete product by ID | `200 OK`, `404 Not Found` |
 
 ---
 
-## 🧪 Sample Testing Requests
+## Sample Testing Requests
 
-You can execute requests using [sample.http](sample.http) (VS Code REST Client) or via `curl`:
+Test using [sample.http](sample.http) (REST Client / Postman) or `curl`:
 
 ```bash
 # 1. Create a product (201 Created)
 curl -X POST http://localhost:3000/products \
   -H "Content-Type: application/json" \
-  -d '{"name": "Wireless Mouse", "description": "Ergonomic 2.4GHz", "price": 29.99, "stock": 20}'
+  -d '{"name": "Wireless Mouse", "description": "Ergonomic rechargeable mouse", "price": 29.50, "stock": 50}'
 
 # 2. Validation failure (400 Bad Request)
 curl -X POST http://localhost:3000/products \
   -H "Content-Type: application/json" \
   -d '{"description": "Missing name and price"}'
 
-# 3. Get all products (200 OK)
+# 3. List all products (200 OK)
 curl -X GET "http://localhost:3000/products?page=1&limit=10"
 
 # 4. Get single product by ID (200 OK)
 curl -X GET http://localhost:3000/products/1
 
 # 5. Non-existent product (404 Not Found)
-curl -X GET http://localhost:3000/products/9999
+curl -X GET http://localhost:3000/products/99999
 
 # 6. Update product (200 OK)
 curl -X PUT http://localhost:3000/products/1 \
   -H "Content-Type: application/json" \
-  -d '{"price": 24.99, "stock": 18}'
+  -d '{"price": 24.99, "stock": 45}'
 
 # 7. Delete product (200 OK)
 curl -X DELETE http://localhost:3000/products/1

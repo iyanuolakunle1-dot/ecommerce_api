@@ -2,42 +2,55 @@ const db = require('../../config/db');
 
 class ProductRepository {
     async create({ name, description, price, stock }) {
-        const result = await db.query(
-            'INSERT INTO products (name, description, price, stock) VALUES (?, ?, ?, ?)',
-            [name, description || '', price, stock || 0]
-        );
-        const newId = result.rows[0].id;
-        return this.findById(newId);
+        const text = `
+            INSERT INTO products (name, description, price, stock)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `;
+        const { rows } = await db.query(text, [name, description || '', price, stock || 0]);
+        return rows[0];
     }
 
     async findAll(limit, offset) {
-        const result = await db.query(
-            'SELECT * FROM products LIMIT ? OFFSET ?',
-            [limit, offset]
-        );
-        const count = await db.query('SELECT COUNT(*) AS total FROM products');
+        const listText = `
+            SELECT * FROM products
+            ORDER BY id ASC
+            LIMIT $1 OFFSET $2
+        `;
+        const countText = 'SELECT COUNT(*)::int AS total FROM products';
+
+        const [listResult, countResult] = await Promise.all([
+            db.query(listText, [limit, offset]),
+            db.query(countText)
+        ]);
+
         return {
-            items: result.rows,
-            total: count.rows[0].total
+            items: listResult.rows,
+            total: countResult.rows[0].total
         };
     }
 
     async findById(id) {
-        const result = await db.query('SELECT * FROM products WHERE id = ?', [id]);
-        return result.rows[0] || null;
+        const text = 'SELECT * FROM products WHERE id = $1';
+        const { rows } = await db.query(text, [id]);
+        return rows[0] || null;
     }
 
     async update(id, { name, description, price, stock }) {
-        await db.query(
-            'UPDATE products SET name = ?, description = ?, price = ?, stock = ? WHERE id = ?',
-            [name, description, price, stock, id]
-        );
-        return this.findById(id);
+        const text = `
+            UPDATE products
+            SET name = $1, description = $2, price = $3, stock = $4
+            WHERE id = $5
+            RETURNING *
+        `;
+        const { rows } = await db.query(text, [name, description, price, stock, id]);
+        return rows[0] || null;
     }
 
     async delete(id) {
-        await db.query('DELETE FROM products WHERE id = ?', [id]);
-        return true;
+        const text = 'DELETE FROM products WHERE id = $1 RETURNING id';
+        const { rows } = await db.query(text, [id]);
+        return rows.length > 0;
     }
 }
 

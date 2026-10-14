@@ -1,9 +1,19 @@
 const request = require('supertest');
 const app = require('../server');
+const { initDb, pool } = require('../src/config/db');
 
-let productId = '';
+let productId;
 
 describe('Week 1 Core CRUD Endpoints: Products Entity', () => {
+    beforeAll(async () => {
+        if (process.env.DATABASE_URL) {
+            await initDb();
+        }
+    });
+
+    afterAll(async () => {
+        await pool.end();
+    });
 
     test('GET / - returns welcome message and status 200', async () => {
         const res = await request(app).get('/');
@@ -44,7 +54,7 @@ describe('Week 1 Core CRUD Endpoints: Products Entity', () => {
     test('GET /products/:id - returns single product with 200 OK', async () => {
         const res = await request(app).get(`/products/${productId}`);
         expect(res.statusCode).toBe(200);
-        expect(res.body.id).toBe(productId);
+        expect(Number(res.body.id)).toBe(Number(productId));
     });
 
     test('GET /products/:id - returns 404 when product is not found', async () => {

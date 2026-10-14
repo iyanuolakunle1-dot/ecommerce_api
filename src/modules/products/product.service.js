@@ -3,22 +3,29 @@ const productRepository = require('./product.repository');
 class ProductService {
     async createProduct(data) {
         const { name, description, price, stock } = data;
-        if (!name || price === undefined) {
-            const error = new Error('Product name and price are required');
+
+        if (!name || typeof name !== 'string' || !name.trim()) {
+            const error = new Error('Product name is required');
             error.statusCode = 400;
             throw error;
         }
 
-        const productPrice = parseFloat(price);
-        if (isNaN(productPrice) || productPrice < 0) {
+        if (price === undefined || price === null || price === '') {
+            const error = new Error('Product price is required');
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice) || parsedPrice < 0) {
             const error = new Error('Price must be a valid positive number');
             error.statusCode = 400;
             throw error;
         }
 
-        const productStock = stock !== undefined ? parseInt(stock, 10) : 0;
-        if (isNaN(productStock) || productStock < 0) {
-            const error = new Error('Stock must be a valid non-negative integer');
+        const parsedStock = stock !== undefined ? parseInt(stock, 10) : 0;
+        if (isNaN(parsedStock) || parsedStock < 0) {
+            const error = new Error('Stock must be a non-negative integer');
             error.statusCode = 400;
             throw error;
         }
@@ -26,14 +33,14 @@ class ProductService {
         return await productRepository.create({
             name: name.trim(),
             description: description ? description.trim() : '',
-            price: productPrice,
-            stock: productStock
+            price: parsedPrice,
+            stock: parsedStock
         });
     }
 
     async getProducts(page = 1, limit = 10) {
         const pageNum = Math.max(1, parseInt(page, 10) || 1);
-        const limitNum = Math.max(1, parseInt(limit, 10) || 10);
+        const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 10));
         const offset = (pageNum - 1) * limitNum;
 
         const { items, total } = await productRepository.findAll(limitNum, offset);
@@ -46,24 +53,64 @@ class ProductService {
     }
 
     async getProductById(id) {
-        const product = await productRepository.findById(id);
+        const productId = parseInt(id, 10);
+        if (isNaN(productId) || productId <= 0) {
+            const error = new Error('Invalid product ID');
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const product = await productRepository.findById(productId);
         if (!product) {
             const error = new Error('Product not found');
             error.statusCode = 404;
             throw error;
         }
+
         return product;
     }
 
     async updateProduct(id, data) {
         const current = await this.getProductById(id);
 
-        const newName = data.name !== undefined ? data.name.trim() : current.name;
-        const newDesc = data.description !== undefined ? data.description.trim() : current.description;
-        const newPrice = data.price !== undefined ? parseFloat(data.price) : current.price;
-        const newStock = data.stock !== undefined ? parseInt(data.stock, 10) : current.stock;
+        let newName = current.name;
+        if (data.name !== undefined) {
+            if (typeof data.name !== 'string' || !data.name.trim()) {
+                const error = new Error('Product name cannot be empty');
+                error.statusCode = 400;
+                throw error;
+            }
+            newName = data.name.trim();
+        }
 
-        return await productRepository.update(id, {
+        let newDesc = current.description;
+        if (data.description !== undefined) {
+            newDesc = data.description ? data.description.trim() : '';
+        }
+
+        let newPrice = current.price;
+        if (data.price !== undefined) {
+            const parsedPrice = parseFloat(data.price);
+            if (isNaN(parsedPrice) || parsedPrice < 0) {
+                const error = new Error('Price must be a valid positive number');
+                error.statusCode = 400;
+                throw error;
+            }
+            newPrice = parsedPrice;
+        }
+
+        let newStock = current.stock;
+        if (data.stock !== undefined) {
+            const parsedStock = parseInt(data.stock, 10);
+            if (isNaN(parsedStock) || parsedStock < 0) {
+                const error = new Error('Stock must be a non-negative integer');
+                error.statusCode = 400;
+                throw error;
+            }
+            newStock = parsedStock;
+        }
+
+        return await productRepository.update(current.id, {
             name: newName,
             description: newDesc,
             price: newPrice,
@@ -72,8 +119,8 @@ class ProductService {
     }
 
     async deleteProduct(id) {
-        await this.getProductById(id);
-        return await productRepository.delete(id);
+        const product = await this.getProductById(id);
+        return await productRepository.delete(product.id);
     }
 }
 

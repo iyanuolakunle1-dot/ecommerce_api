@@ -1,9 +1,8 @@
 ### E-Commerce API - Week 1 Core CRUD Requests
-### Test with VS Code REST Client or Postman
-
+### Base URL for local testing or change to deployed URL
 @baseUrl = http://localhost:3000
 
-### 1. Root / Health Check (200 OK)
+### 1. Root Welcome Check (200 OK)
 GET {{baseUrl}}/
 
 ### 2. Create Product (201 Created)
@@ -17,7 +16,7 @@ Content-Type: application/json
   "stock": 15
 }
 
-### 3. Create Product - Validation Failure (400 Bad Request)
+### 3. Create Product - Validation Error (400 Bad Request)
 POST {{baseUrl}}/products
 Content-Type: application/json
 
