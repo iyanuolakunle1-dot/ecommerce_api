@@ -15,7 +15,6 @@ All Week 1 submission deliverables are organized in the [`/docs`](docs) director
 - [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Problem, target user, 3 entities, core flow, scope, and top 3 risks.
 - [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigations.
 - [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schemas, ERD diagram, and endpoint contracts.
-- [Task 1.2: Presentation Guide](docs/PRESENTATION_GUIDE.md): 5-minute mentor walkthrough script and live demo steps.
 - [Weekly Update Note](docs/WEEK1_UPDATE_NOTE.md): Formatted submission note.
 
 ---

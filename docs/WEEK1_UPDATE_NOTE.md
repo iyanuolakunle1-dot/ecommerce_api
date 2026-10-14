@@ -6,7 +6,6 @@ Delivered:
 - Task 1.2 Core CRUD Endpoints for Products entity: [src/modules/products](src/modules/products)
 - Database schema and PostgreSQL connection pool: [schema.sql](schema.sql) and [src/config/db.js](src/config/db.js)
 - Database seed script and sample requests: [seed.js](seed.js) and [sample.http](sample.http)
-- 5-Minute Mentor Presentation Guide: [docs/PRESENTATION_GUIDE.md](docs/PRESENTATION_GUIDE.md)
 - Automated test suite for CRUD operations: [tests/api.test.js](tests/api.test.js)
 - Repository release tag: `week-1`
 
