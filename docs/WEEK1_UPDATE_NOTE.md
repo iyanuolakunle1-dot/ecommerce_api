@@ -21,6 +21,7 @@ Blockers / risks:
 - Risk of overselling when orders entity is implemented in Week 2. Will mitigate using SQL transactions and conditional stock checks.
 - Managing database migrations cleanly between local development and cloud hosting as entities grow in Week 2 and Week 3.
 
-AI and sources used:
-- Official Express and node-pg documentation for connection pool and SSL configuration.
-- Markdown table and mermaid ERD syntax guides.
+Sources used:
+- Official Express.js documentation (expressjs.com)
+- node-postgres (pg) connection pooling and SSL guide (node-postgres.com)
+- MDN Web Docs for HTTP status codes and REST conventions
