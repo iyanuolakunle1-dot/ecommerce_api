@@ -37,3 +37,9 @@ Top 3 risks:
    - Mitigation: Configure standard connection pooling in `pg` with dynamic SSL handling for cloud hosts.
 3. Feature creep: Attempting checkout workflows and payment APIs within the 3-week timeframe.
    - Mitigation: Restrict feature scope strictly to core catalog management, authenticated access, and basic order processing.
+
+---
+
+Resources:
+- GitHub Repository: https://github.com/iyanuolakunle1-dot/ecommerce_api
+- Postman Collection: https://olakunleiyanu993-6589025.postman.co/workspace/olakunle-iyanu's-Workspace~87bc85c7-48f4-4bfa-8b46-9fb1827a98a4/collection/56179105-f0169917-8156-432b-a24f-3d7aade8b556?action=share&source=copy-link&creator=56179105
