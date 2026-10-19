@@ -1,20 +1,25 @@
 const db = require('../../config/db');
 
 class ProductRepository {
-    async create({ name, description, price, stock }) {
+    async create({ name, description, price, stock, category_id }) {
         const text = `
-            INSERT INTO products (name, description, price, stock)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO products (name, description, price, stock, category_id)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING *
         `;
-        const { rows } = await db.query(text, [name, description || '', price, stock || 0]);
+        const { rows } = await db.query(text, [name, description || '', price, stock || 0, category_id || null]);
         return rows[0];
     }
 
     async findAll(limit, offset) {
+        // LEFT JOIN so products without a category are still returned
         const listText = `
-            SELECT * FROM products
-            ORDER BY id ASC
+            SELECT 
+                p.*,
+                c.name AS category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            ORDER BY p.id ASC
             LIMIT $1 OFFSET $2
         `;
         const countText = 'SELECT COUNT(*)::int AS total FROM products';
@@ -31,19 +36,26 @@ class ProductRepository {
     }
 
     async findById(id) {
-        const text = 'SELECT * FROM products WHERE id = $1';
+        const text = `
+            SELECT 
+                p.*,
+                c.name AS category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.id = $1
+        `;
         const { rows } = await db.query(text, [id]);
         return rows[0] || null;
     }
 
-    async update(id, { name, description, price, stock }) {
+    async update(id, { name, description, price, stock, category_id }) {
         const text = `
             UPDATE products
-            SET name = $1, description = $2, price = $3, stock = $4
-            WHERE id = $5
+            SET name = $1, description = $2, price = $3, stock = $4, category_id = $5
+            WHERE id = $6
             RETURNING *
         `;
-        const { rows } = await db.query(text, [name, description, price, stock, id]);
+        const { rows } = await db.query(text, [name, description, price, stock, category_id, id]);
         return rows[0] || null;
     }
 

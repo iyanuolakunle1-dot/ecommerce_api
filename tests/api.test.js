@@ -6,6 +6,7 @@ let authToken;
 let testUserId;
 let testProductId;
 let testOrderId;
+let testCategoryId;
 let otherUserToken;
 
 describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
@@ -121,7 +122,70 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
         });
     });
 
-    describe('3. Products CRUD & Protected Mutating Endpoints (Week 1 & 2)', () => {
+    describe('3. Categories CRUD (4th Entity)', () => {
+        test('GET /categories - public access returns list of categories (200)', async () => {
+            const res = await request(app).get('/categories');
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toHaveProperty('data');
+            expect(Array.isArray(res.body.data)).toBe(true);
+        });
+
+        test('POST /categories - rejects unauthenticated category creation (401)', async () => {
+            const res = await request(app).post('/categories').send({
+                name: 'Unauthorized Category'
+            });
+            expect(res.statusCode).toBe(401);
+            expect(res.body.error.code).toBe('UNAUTHORIZED');
+        });
+
+        test('POST /categories - creates a new category with valid auth token (201)', async () => {
+            const res = await request(app)
+                .post('/categories')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({
+                    name: `Electronics_${timestamp}`,
+                    description: 'Computer peripherals and gadgets'
+                });
+
+            expect(res.statusCode).toBe(201);
+            expect(res.body).toHaveProperty('category');
+            expect(res.body.category.name).toBe(`Electronics_${timestamp}`);
+            testCategoryId = res.body.category.id;
+        });
+
+        test('POST /categories - rejects duplicate category name (409)', async () => {
+            const res = await request(app)
+                .post('/categories')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ name: `Electronics_${timestamp}` });
+
+            expect(res.statusCode).toBe(409);
+            expect(res.body.error.code).toBe('DUPLICATE_CATEGORY');
+        });
+
+        test('GET /categories/:id - retrieves category by ID (200)', async () => {
+            const res = await request(app).get(`/categories/${testCategoryId}`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body.data.id).toBe(testCategoryId);
+        });
+
+        test('GET /categories/:id - returns 404 for non-existent category', async () => {
+            const res = await request(app).get('/categories/999999');
+            expect(res.statusCode).toBe(404);
+        });
+
+        test('PUT /categories/:id - updates a category with auth token (200)', async () => {
+            const res = await request(app)
+                .put(`/categories/${testCategoryId}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ description: 'Updated description for electronics' });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.category.description).toBe('Updated description for electronics');
+        });
+    });
+
+    describe('4. Products CRUD & Protected Mutating Endpoints (Week 1 & 2)', () => {
         test('GET /products - public access lists products (200)', async () => {
             const res = await request(app).get('/products?page=1&limit=10');
             expect(res.statusCode).toBe(200);
@@ -139,7 +203,7 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
             expect(res.body.error.code).toBe('UNAUTHORIZED');
         });
 
-        test('POST /products - creates new product with valid auth token (201)', async () => {
+        test('POST /products - creates new product linked to a category (201)', async () => {
             const res = await request(app)
                 .post('/products')
                 .set('Authorization', `Bearer ${authToken}`)
@@ -147,19 +211,30 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
                     name: `Wireless Keyboard ${timestamp}`,
                     description: 'Low-profile mechanical keyboard',
                     price: 89.99,
-                    stock: 15
+                    stock: 15,
+                    category_id: testCategoryId
                 });
 
             expect(res.statusCode).toBe(201);
             expect(res.body).toHaveProperty('product');
             expect(res.body.product.name).toBe(`Wireless Keyboard ${timestamp}`);
+            expect(res.body.product.category_id).toBe(testCategoryId);
             testProductId = res.body.product.id;
         });
 
-        test('GET /products/:id - retrieves product details (200)', async () => {
+        test('GET /categories/:id/products - lists products belonging to a category (200)', async () => {
+            const res = await request(app).get(`/categories/${testCategoryId}/products`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toHaveProperty('data');
+            expect(Array.isArray(res.body.data)).toBe(true);
+            expect(res.body.data.length).toBeGreaterThan(0);
+        });
+
+        test('GET /products/:id - retrieves product with category info (200)', async () => {
             const res = await request(app).get(`/products/${testProductId}`);
             expect(res.statusCode).toBe(200);
             expect(Number(res.body.id)).toBe(Number(testProductId));
+            expect(res.body).toHaveProperty('category_name');
         });
 
         test('GET /products/:id - returns 404 for non-existent product', async () => {
@@ -182,7 +257,7 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
         });
     });
 
-    describe('4. Relationships, Orders & Stock Deduction (Task 2.2)', () => {
+    describe('5. Relationships, Orders & Stock Deduction (Task 2.2)', () => {
         test('POST /orders - rejects unauthenticated order placement (401)', async () => {
             const res = await request(app).post('/orders').send({
                 product_id: testProductId,
@@ -270,7 +345,7 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
             expect(productCheck.body.stock).toBe(20);
         });
 
-        test('POST /orders/:id/cancel - prevents non-owner from cancelling someone else\'s order (403)', async () => {
+        test("POST /orders/:id/cancel - prevents non-owner from cancelling someone else's order (403)", async () => {
             const res = await request(app)
                 .post(`/orders/${testOrderId}/cancel`)
                 .set('Authorization', `Bearer ${otherUserToken}`);

@@ -13,7 +13,15 @@ const pool = new Pool({
 const query = (text, params) => pool.query(text, params);
 
 const initDb = async () => {
+    // CREATE TABLE IF NOT EXISTS is idempotent — safe to run on every startup
     const ddl = `
+        CREATE TABLE IF NOT EXISTS categories (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) UNIQUE NOT NULL,
+            description TEXT,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             full_name VARCHAR(255) NOT NULL,
@@ -29,6 +37,7 @@ const initDb = async () => {
             description TEXT,
             price NUMERIC(10, 2) NOT NULL,
             stock INTEGER NOT NULL DEFAULT 0,
+            category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
 
@@ -43,6 +52,22 @@ const initDb = async () => {
         );
     `;
     await query(ddl);
+
+    // Migration: add category_id to an existing products table that predates this column.
+    // DO NOTHING means this is safe to run even if the column already exists.
+    await query(`
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'products' AND column_name = 'category_id'
+            ) THEN
+                ALTER TABLE products
+                ADD COLUMN category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL;
+            END IF;
+        END;
+        $$;
+    `);
 };
 
 module.exports = {

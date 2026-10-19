@@ -2,7 +2,7 @@ const productRepository = require('./product.repository');
 
 class ProductService {
     async createProduct(data) {
-        const { name, description, price, stock } = data;
+        const { name, description, price, stock, category_id } = data;
 
         if (!name || typeof name !== 'string' || !name.trim()) {
             const error = new Error('Product name is required');
@@ -30,11 +30,15 @@ class ProductService {
             throw error;
         }
 
+        // category_id is optional — null means "uncategorized"
+        const parsedCategoryId = category_id ? parseInt(category_id, 10) : null;
+
         return await productRepository.create({
             name: name.trim(),
             description: description ? description.trim() : '',
             price: parsedPrice,
-            stock: parsedStock
+            stock: parsedStock,
+            category_id: parsedCategoryId
         });
     }
 
@@ -110,11 +114,18 @@ class ProductService {
             newStock = parsedStock;
         }
 
+        // Allow updating the category (pass null to remove from a category)
+        let newCategoryId = current.category_id;
+        if (data.category_id !== undefined) {
+            newCategoryId = data.category_id ? parseInt(data.category_id, 10) : null;
+        }
+
         return await productRepository.update(current.id, {
             name: newName,
             description: newDesc,
             price: newPrice,
-            stock: newStock
+            stock: newStock,
+            category_id: newCategoryId
         });
     }
 

@@ -5,6 +5,7 @@ const { initDb } = require('./src/config/db');
 const authRoutes = require('./src/modules/auth/auth.routes');
 const productRoutes = require('./src/modules/products/product.routes');
 const orderRoutes = require('./src/modules/orders/order.routes');
+const categoryRoutes = require('./src/modules/categories/category.routes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 
 // Modular Monolith Routes
 app.use('/auth', authRoutes);
+app.use('/categories', categoryRoutes);
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 
