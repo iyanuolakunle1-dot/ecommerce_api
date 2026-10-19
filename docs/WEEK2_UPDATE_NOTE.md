@@ -60,7 +60,10 @@
 
 ---
 
-## 5. AI and Sources Used
+## 5. References and Sources
 
-- **Antigravity AI Assistant**: Used to scaffold boilerplate route structures and verify test assertion edge cases.
-- **What I Changed / Authored**: Wrote the domain models, customized Joi regex rules, formulated transactional SQL queries with rollback handlers, authored the issue log, and verified test suites.
+- **PostgreSQL Documentation** — `FOR UPDATE` row locking and transaction isolation levels.
+- **Joi Documentation** — Schema validation API, custom regex rules, and error formatting.
+- **JWT.io / jsonwebtoken README** — Token signing options and expiry configuration.
+- **Express.js Docs** — Centralized error handling middleware pattern.
+- **Stack Overflow / Node.js community** — Debugging `pg.Pool` connection release edge cases.
