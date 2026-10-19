@@ -1,46 +1,132 @@
-### E-Commerce API - Week 1 Core CRUD Requests
-### Base URL for local testing or change to deployed URL
+### E-Commerce Inventory & Order API - Week 2 Collection
+### Test with VS Code REST Client extension or import into Postman
+
 @baseUrl = http://localhost:3000
 
-### 1. Root Welcome Check (200 OK)
+### =======================================================
+### 1. HEALTH CHECK
+### =======================================================
+
+### Check API Status
 GET {{baseUrl}}/
 
-### 2. Create Product (201 Created)
-POST {{baseUrl}}/products
+### =======================================================
+### 2. AUTHENTICATION & AUTHORIZATION (TASK 2.1)
+### =======================================================
+
+### 2.1 Register New User
+# @name registerUser
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "name": "Wireless Mechanical Keyboard",
-  "description": "75% compact keyboard with Bluetooth 5.0",
-  "price": 89.99,
-  "stock": 15
+  "full_name": "Ada Lovelace",
+  "username": "adalove_test",
+  "email": "ada_test@example.com",
+  "password": "password123"
 }
 
-### 3. Create Product - Validation Error (400 Bad Request)
-POST {{baseUrl}}/products
+### 2.2 Login User & Get JWT
+# @name loginUser
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "description": "Missing name and price"
+  "email": "ada@example.com",
+  "password": "password123"
 }
 
-### 4. Get All Products with Pagination (200 OK)
+### Store token dynamically from login response:
+@token = {{loginUser.response.body.data.token}}
+
+### 2.3 Get Current User Profile (Protected)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### 2.4 Test 401 Unauthorized (No Token)
+GET {{baseUrl}}/auth/me
+
+### =======================================================
+### 3. PRODUCTS (CATALOG MANAGEMENT)
+### =======================================================
+
+### 3.1 List All Products (Public, Paginated)
 GET {{baseUrl}}/products?page=1&limit=10
 
-### 5. Get Single Product by ID (200 OK)
+### 3.2 Get Single Product by ID (Public)
 GET {{baseUrl}}/products/1
 
-### 6. Get Non-existent Product (404 Not Found)
-GET {{baseUrl}}/products/9999
-
-### 7. Update Product (200 OK)
-PUT {{baseUrl}}/products/1
+### 3.3 Create Product (Protected: Requires Bearer Token)
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "price": 79.99,
-  "stock": 20
+  "name": "Mechanical Keyboard RGB",
+  "description": "Hot-swappable 75% mechanical keyboard with PBT keycaps",
+  "price": 99.99,
+  "stock": 30
 }
 
-### 8. Delete Product (200 OK)
-DELETE {{baseUrl}}/products/1
+### 3.4 Update Product (Protected: Requires Bearer Token)
+PUT {{baseUrl}}/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "price": 84.99,
+  "stock": 28
+}
+
+### 3.5 Delete Product (Protected: Requires Bearer Token)
+DELETE {{baseUrl}}/products/3
+Authorization: Bearer {{token}}
+
+### =======================================================
+### 4. RELATIONSHIPS & ORDERS (TASK 2.2)
+### =======================================================
+
+### 4.1 Place Order (Deducts Stock & Calculates Total)
+# @name placeOrder
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 1,
+  "quantity": 2
+}
+
+### Store order ID dynamically:
+@orderId = {{placeOrder.response.body.data.id}}
+
+### 4.2 Test 400 Insufficient Stock
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 1,
+  "quantity": 9999
+}
+
+### 4.3 Get Authenticated User's Orders (1:N Relationship)
+GET {{baseUrl}}/orders/my-orders?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 4.4 Get Single Order Details (Ownership Check)
+GET {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
+
+### 4.5 Update Order Status
+PUT {{baseUrl}}/orders/{{orderId}}/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "shipped"
+}
+
+### 4.6 Cancel Order (Restores Stock back to Product)
+POST {{baseUrl}}/orders/{{orderId}}/cancel
+Authorization: Bearer {{token}}

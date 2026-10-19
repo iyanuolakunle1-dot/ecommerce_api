@@ -19,19 +19,19 @@ Track: Backend Development
 - [x] 5-minute mentor walkthrough presentation guide.
 
 ### Week 2 — Auth and Robustness
-- [ ] Task 2.1 Authentication & Authorisation:
+- [x] Task 2.1 Authentication & Authorisation:
   - User registration (`POST /auth/register`) and login (`POST /auth/login`).
   - Password hashing with `bcryptjs`.
   - JWT token generation and authentication middleware.
   - Ownership protection: only authenticated users can modify products/orders.
   - Return `401 Unauthorized` and `403 Forbidden` accurately.
-- [ ] Task 2.2 Relationships, Validation & Error Handling:
-  - Relational endpoints linking users, products, and orders (`POST /orders`, `GET /orders`, `GET /users/:id/orders`).
+- [x] Task 2.2 Relationships, Validation & Error Handling:
+  - Relational endpoints linking users, products, and orders (`POST /orders`, `GET /orders/my-orders`, `GET /orders/:id`, `POST /orders/:id/cancel`).
   - Input validation schemas with Joi.
   - Global centralized error handler with consistent error format: `{ "error": { "code": "...", "message": "..." } }`.
-  - Edge cases: stock deduction, prevention of negative inventory, non-existent foreign keys.
-- [ ] Maintain issue log with at least 5 resolved issues and bug fixes.
-- [ ] Git release tag `week-2`.
+  - Edge cases: stock deduction, prevention of negative inventory, non-existent foreign keys, stock restoration on cancellation.
+- [x] Maintain issue log with 6 resolved issues and bug fixes in `docs/ISSUE_LOG.md`.
+- [x] Git release tag `week-2`.
 
 ### Week 3 — Quality and Delivery
 - [ ] Task 3.1 Testing:

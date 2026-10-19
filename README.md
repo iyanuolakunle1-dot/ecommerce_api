@@ -1,65 +1,87 @@
-# E-Commerce Inventory & Order API (Week 1)
+# E-Commerce Inventory & Order API (Week 2)
 
-A modular REST API built with Node.js, Express, and PostgreSQL for small retail merchants to catalog products and manage inventory.
+A clean, robust modular monolithic REST API built with Node.js, Express, and PostgreSQL for small retail merchants to catalog products, authenticate users, and manage orders with atomic stock inventory control.
 
 - **GitHub Repository**: [https://github.com/iyanuolakunle1-dot/ecommerce_api](https://github.com/iyanuolakunle1-dot/ecommerce_api)
 - **Live Deployed API**: [https://ecommerce-api-6abw.onrender.com](https://ecommerce-api-6abw.onrender.com)
-- **Release Tag**: `week-1`
+- **Release Tag**: `week-2`
 
 ---
 
-## Documentation
+## 📚 Project Documentation
 
-All Week 1 submission deliverables are organized in the [`/docs`](docs) directory:
+All design and submission documents are organized in the [`/docs`](docs) directory:
 
-- [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Problem, target user, 3 entities, core flow, scope, and top 3 risks.
-- [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigations.
-- [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schemas, ERD diagram, and endpoint contracts.
-- [Weekly Update Note](docs/WEEK1_UPDATE_NOTE.md): Formatted submission note.
+- [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Product problem, target user, 3 entities, core user flow, and scope.
+- [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigation strategies.
+- [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schema, ERD diagram, and endpoint contracts.
+- [Task 2 Issue Log](docs/ISSUE_LOG.md): 6 detailed entries documenting bugs found, options considered, and how they were solved.
+- [Weekly Update Notes](docs/WEEK2_UPDATE_NOTE.md): Formatted submission note for Week 2.
 
 ---
 
-## Tech Stack & Architecture
+## 🏛️ Architecture & Clean Modular Structure
 
-- **Runtime**: Node.js (v18+)
-- **Framework**: Express.js
-- **Database**: PostgreSQL (via `pg` connection pool)
-- **Architecture**: Modular Monolith
+The codebase follows a **modular monolithic architecture** where each business domain owns its own repository queries, business logic service, input validation, and controller handlers:
 
 ```text
 ecommerce_stage1/
-├── docs/                      # Week 1 documentation & submission files
+├── docs/                      # Submission documentation & specs
 │   ├── IDEA_ONE_PAGER.md
 │   ├── WORK_PLAN.md
 │   ├── DATA_MODEL_AND_API_SPEC.md
-│   ├── PRESENTATION_GUIDE.md
-│   └── WEEK1_UPDATE_NOTE.md
+│   ├── ISSUE_LOG.md           # Week 2 Issue Log (6 entries)
+│   ├── WEEK1_UPDATE_NOTE.md
+│   └── WEEK2_UPDATE_NOTE.md
 ├── src/
 │   ├── config/
-│   │   └── db.js              # PostgreSQL pool & table initialization
+│   │   └── db.js              # PostgreSQL pool & automated DDL initialization
+│   ├── middleware/
+│   │   ├── auth.js            # JWT Bearer token verification (401 response)
+│   │   └── validate.js        # Generic Joi request validation middleware
 │   └── modules/
-│       └── products/          # Products domain module (Week 1 Core Entity)
-│           ├── product.repository.js  # SQL queries (pg)
-│           ├── product.service.js     # Validation & business logic
-│           ├── product.controller.js  # HTTP request/response handlers
-│           └── product.routes.js      # Express route definitions
+│       ├── auth/              # Authentication & User Management (Task 2.1)
+│       │   ├── auth.controller.js
+│       │   ├── auth.repository.js
+│       │   ├── auth.routes.js
+│       │   ├── auth.service.js
+│       │   └── auth.validation.js
+│       ├── products/          # Products Catalog (Main Entity)
+│       │   ├── product.controller.js
+│       │   ├── product.repository.js
+│       │   ├── product.routes.js
+│       │   └── product.service.js
+│       └── orders/            # Relationships & Stock Tracking (Task 2.2)
+│           ├── order.controller.js
+│           ├── order.repository.js
+│           ├── order.routes.js
+│           ├── order.service.js
+│           └── order.validation.js
 ├── tests/
-│   └── api.test.js            # Integration test suite (Supertest)
+│   └── api.test.js            # 23 Automated Integration Tests (Supertest)
 ├── .env.example               # Environment variables template
 ├── package.json
-├── sample.http                # Executable HTTP requests
-├── schema.sql                 # PostgreSQL DDL table definitions
-├── seed.js                    # Dummy catalog data seeder
-└── server.js                  # Application entry point
+├── sample.http                # Executable REST client requests (Week 2 collection)
+├── schema.sql                 # PostgreSQL relational schema
+├── seed.js                    # Database seeder (users, products, orders)
+└── server.js                  # Central application entry point & error handler
 ```
 
 ---
 
-## Local Setup Guide
+## 🗄️ Relational Data Model (3 Entities)
+
+1. **`users`**: Customer and merchant accounts (`id`, `full_name`, `username`, `email`, `password` hashed with bcrypt, `created_at`).
+2. **`products`**: Inventory catalog items (`id`, `name`, `description`, `price`, `stock`, `created_at`).
+3. **`orders`**: Relational junction connecting users and products (`id`, `user_id` FK, `product_id` FK, `quantity`, `total_price`, `status`, `created_at`).
+
+---
+
+## 🚀 Local Setup Guide
 
 ### 1. Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL (local instance or cloud database such as Supabase / Render / Neon)
+- **Node.js** (v18 or higher)
+- **PostgreSQL** (local instance or cloud database such as Supabase / Render / Neon)
 
 ### 2. Install Dependencies
 ```bash
@@ -71,16 +93,16 @@ Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
-Update `DATABASE_URL` with your PostgreSQL credentials:
+Fill in your credentials:
 ```env
 PORT=3000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ecommerce_db
+DATABASE_URL=postgresql://postgres:password@localhost:5432/ecommerce_db
+JWT_SECRET=your_jwt_secret_key_here
 ```
 
-### 4. Create Tables & Seed Data
-You can initialize the schema using `schema.sql` or run the seed script which initializes the table and inserts sample records:
+### 4. Seed Database
+Run the seed script to create initial test records for users, catalog products, and sample orders:
 ```bash
-# Seed sample catalog items
 npm run seed
 ```
 
@@ -89,60 +111,60 @@ npm run seed
 # Production mode
 npm start
 
-# Development mode (auto-reload)
+# Development mode (with live reload)
 npm run dev
 ```
 The server will start listening at `http://localhost:3000`.
 
-### 6. Run Tests
+### 6. Run Automated Tests
+Run the single-command automated test runner covering all 23 integration tests across Auth, Products CRUD, Orders, Stock Deduction, and Failure Modes:
 ```bash
 npm test
 ```
 
 ---
 
-## Core CRUD Endpoints (`/products`)
+## 📖 API Endpoints Reference
 
-| Method | Endpoint | Purpose | Status Codes |
-|---|---|---|---|
-| `GET` | `/` | API Health & Welcome | `200 OK` |
-| `POST` | `/products` | Create a new product | `201 Created`, `400 Bad Request` |
-| `GET` | `/products?page=1&limit=10` | List products (paginated) | `200 OK` |
-| `GET` | `/products/:id` | Get single product by ID | `200 OK`, `400 Bad Request`, `404 Not Found` |
-| `PUT` | `/products/:id` | Update product details | `200 OK`, `400 Bad Request`, `404 Not Found` |
-| `DELETE` | `/products/:id` | Delete product by ID | `200 OK`, `404 Not Found` |
+### 1. Authentication (`/auth`)
+| Method | Endpoint | Description | Auth Required | Status Codes |
+|---|---|---|---|---|
+| `POST` | `/auth/register` | Register new user (hashes password with bcrypt) | No | `201 Created`, `400 Bad Request`, `409 Conflict` |
+| `POST` | `/auth/login` | Login and receive JWT Bearer token | No | `200 OK`, `400 Bad Request`, `401 Unauthorized` |
+| `GET` | `/auth/me` | Fetch authenticated user profile | **Yes** | `200 OK`, `401 Unauthorized` |
+
+### 2. Products Catalog (`/products`)
+| Method | Endpoint | Description | Auth Required | Status Codes |
+|---|---|---|---|---|
+| `GET` | `/products?page=1&limit=10` | List products (paginated) | No | `200 OK` |
+| `GET` | `/products/:id` | Get single product by ID | No | `200 OK`, `404 Not Found` |
+| `POST` | `/products` | Create a new catalog item | **Yes** | `201 Created`, `400 Bad Request`, `401 Unauthorized` |
+| `PUT` | `/products/:id` | Update product details / stock | **Yes** | `200 OK`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found` |
+| `DELETE` | `/products/:id` | Delete product from catalog | **Yes** | `200 OK`, `401 Unauthorized`, `404 Not Found` |
+
+### 3. Orders & Relationships (`/orders`)
+| Method | Endpoint | Description | Auth Required | Status Codes |
+|---|---|---|---|---|
+| `POST` | `/orders` | Place an order (atomic transaction: verifies & deducts stock) | **Yes** | `201 Created`, `400 Bad Request` (Insufficient Stock), `401 Unauthorized` |
+| `GET` | `/orders/my-orders` | Fetch logged-in user's orders (1:N relationship) | **Yes** | `200 OK`, `401 Unauthorized` |
+| `GET` | `/orders/:id` | Get order details (ownership protected) | **Yes** | `200 OK`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found` |
+| `PUT` | `/orders/:id/status` | Update order status | **Yes** | `200 OK`, `400 Bad Request`, `401 Unauthorized` |
+| `POST` | `/orders/:id/cancel` | Cancel order & restore inventory stock | **Yes** | `200 OK`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found` |
 
 ---
 
-## Sample Testing Requests
+## 🔒 Safe Error Handling & Edge Cases
 
-Test using [sample.http](sample.http) (REST Client / Postman) or `curl`:
-
-```bash
-# 1. Create a product (201 Created)
-curl -X POST http://localhost:3000/products \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Wireless Mouse", "description": "Ergonomic rechargeable mouse", "price": 29.50, "stock": 50}'
-
-# 2. Validation failure (400 Bad Request)
-curl -X POST http://localhost:3000/products \
-  -H "Content-Type: application/json" \
-  -d '{"description": "Missing name and price"}'
-
-# 3. List all products (200 OK)
-curl -X GET "http://localhost:3000/products?page=1&limit=10"
-
-# 4. Get single product by ID (200 OK)
-curl -X GET http://localhost:3000/products/1
-
-# 5. Non-existent product (404 Not Found)
-curl -X GET http://localhost:3000/products/99999
-
-# 6. Update product (200 OK)
-curl -X PUT http://localhost:3000/products/1 \
-  -H "Content-Type: application/json" \
-  -d '{"price": 24.99, "stock": 45}'
-
-# 7. Delete product (200 OK)
-curl -X DELETE http://localhost:3000/products/1
+All endpoints return a uniform error structure without exposing stack traces or internals:
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_STOCK",
+    "message": "Insufficient stock. Only 3 units available."
+  }
+}
 ```
+
+- **Stock Depletion**: Handled with `SELECT ... FOR UPDATE` inside PostgreSQL transactions.
+- **Ownership Check**: Validated against `req.user.id`; returns `403 Forbidden` if a user attempts to access another customer's orders.
+- **Input Validation**: Joi schemas sanitize and validate every incoming payload.

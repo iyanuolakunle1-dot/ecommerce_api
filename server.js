@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { initDb } = require('./src/config/db');
+const authRoutes = require('./src/modules/auth/auth.routes');
 const productRoutes = require('./src/modules/products/product.routes');
+const orderRoutes = require('./src/modules/orders/order.routes');
 
 const app = express();
 
@@ -15,16 +17,30 @@ app.get('/', (req, res) => {
     });
 });
 
+// Modular Monolith Routes
+app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
 
 app.use((req, res) => {
-    res.status(404).json({ message: 'Route not found' });
+    res.status(404).json({
+        error: {
+            code: 'NOT_FOUND',
+            message: 'Route not found'
+        }
+    });
 });
 
+// Centralized error handler with consistent error format
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
+    const code = err.code || (statusCode === 500 ? 'INTERNAL_SERVER_ERROR' : 'ERROR');
+
     res.status(statusCode).json({
-        message: err.message || 'Internal server error'
+        error: {
+            code,
+            message: err.message || 'Internal server error'
+        }
     });
 });
 
