@@ -1,8 +1,10 @@
-# Week 1 Documentation
+# Documentation
 
-This directory contains the official design documents and specifications for **Week 1: Design and Build** of the BuildLab Backend Development internship.
+This directory contains the official design documents and specifications for the BuildLab Backend Development internship.
 
-## Deliverables
+---
+
+## Week 1 — Design and Build
 
 1. **[Idea One-Pager](IDEA_ONE_PAGER.md)**
    - Problem statement, target user, the 3 related entities, core flow, scope, and top 3 risks.
@@ -15,3 +17,10 @@ This directory contains the official design documents and specifications for **W
 
 4. **[Weekly Update Note](WEEK1_UPDATE_NOTE.md)**
    - Formatted weekly submission note following the BuildLab template.
+
+---
+
+## Week 2 — Auth and Robustness
+
+1. **[Weekly Update Note](WEEK2_UPDATE_NOTE.md)**
+   - Authentication & authorisation implementation, relational order management, input validation, structured error handling, and issue log summary.
