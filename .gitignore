@@ -1,6 +1,7 @@
 node_modules
 .env
-presentation_notes.txt
+presentation_notes*.txt
+demo.http
 *.sqlite
 *.sqlite3
 coverage
