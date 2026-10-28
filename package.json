@@ -6,11 +6,13 @@
     "dotenv": "^18.0.7",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "joi": "^18.2.9",
     "jsonwebtoken": "^9.0.3",
     "nodemon": "^3.1.14",
     "pdfkit": "^0.20.2",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "name": "ecommerce_stage1",
   "version": "1.0.0",
@@ -20,7 +22,9 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node seed.js",
-    "test": "jest --testEnvironment=node --runInBand"
+    "test": "jest --testEnvironment=node --runInBand",
+    "test:unit": "jest tests/unit --testEnvironment=node",
+    "test:coverage": "jest --testEnvironment=node --runInBand --coverage"
   },
   "keywords": [],
   "type": "commonjs",
