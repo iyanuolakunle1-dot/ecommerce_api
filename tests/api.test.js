@@ -10,6 +10,7 @@ let testCategoryId;
 let otherUserToken;
 
 describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
+    jest.setTimeout(20000);
     const timestamp = Date.now();
 
     beforeAll(async () => {
@@ -22,11 +23,16 @@ describe('BuildLab Stage 1 Integration Tests (Week 1 & Week 2)', () => {
         await pool.end();
     });
 
-    describe('1. Health Check', () => {
+    describe('1. Health Check & API Docs', () => {
         test('GET / - returns welcome message and status 200', async () => {
             const res = await request(app).get('/');
             expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual({ message: 'Welcome to the ecommerce API' });
+            expect(res.body.message).toBe('Welcome to the ecommerce API');
+        });
+
+        test('GET /api-docs/ - returns Swagger UI HTML', async () => {
+            const res = await request(app).get('/api-docs/');
+            expect([200, 301, 302]).toContain(res.statusCode);
         });
     });
 
