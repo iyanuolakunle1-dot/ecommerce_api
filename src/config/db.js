@@ -1,7 +1,9 @@
 const { Pool } = require('pg');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const connectionString = process.env.DATABASE_URL;
+const connectionString = (process.env.NODE_ENV === 'test' && process.env.DATABASE_URL_TEST)
+    ? process.env.DATABASE_URL_TEST
+    : process.env.DATABASE_URL;
 
 const pool = new Pool({
     connectionString,
@@ -67,6 +69,13 @@ const initDb = async () => {
             END IF;
         END;
         $$;
+    `);
+
+    // Performance indexes on filtered foreign keys and query lookups
+    await query(`
+        CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+        CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+        CREATE INDEX IF NOT EXISTS idx_orders_product_id ON orders(product_id);
     `);
 };
 

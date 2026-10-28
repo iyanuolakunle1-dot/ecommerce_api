@@ -17,7 +17,10 @@ All design and submission documents are organized in the [`/docs`](docs) directo
 - [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigation strategies.
 - [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schema, ERD diagram, and endpoint contracts.
 - [Task 2 Issue Log](docs/ISSUE_LOG.md): 6 detailed entries documenting resolved bugs and technical decisions.
+- [Testing Strategy & Coverage Note](docs/TESTING_AND_COVERAGE_NOTE.md): Coverage breakdown (what is tested, what is not, and why).
+- [Security & Performance Notes](docs/SECURITY_AND_PERFORMANCE_NOTES.md): HTTP security headers, rate limiting, and B-Tree indexes.
 - [Production Deployment Guide](docs/DEPLOYMENT_GUIDE.md): Deployment walkthrough for Render with Supabase PostgreSQL.
+- [Final Case Study & Technical Reflection](docs/FINAL_CASE_STUDY_AND_REFLECTION.md): Complete case study, 3-week reflection, and declaration.
 - [Postman Collection](docs/ecommerce_api.postman_collection.json): Pre-configured collection for testing all endpoints.
 - [Weekly Update Notes (Week 3)](docs/WEEK3_UPDATE_NOTE.md): Formatted submission note for Week 3 Quality & Delivery.
 - [5-Minute Presentation Script](presentation_notes_week3.txt): Mentor walkthrough guide and Q&A cheat-sheet.

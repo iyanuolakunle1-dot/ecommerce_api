@@ -32,8 +32,17 @@ This directory contains the official design documents and specifications for the
 1. **[Weekly Update Note](WEEK3_UPDATE_NOTE.md)**
    - Dual testing strategy (unit & integration), interactive Swagger documentation, security hardening with Helmet and rate limiting, and deployment readiness.
 
-2. **[Production Deployment Guide](DEPLOYMENT_GUIDE.md)**
+2. **[Testing Strategy & Coverage Note](TESTING_AND_COVERAGE_NOTE.md)**
+   - Detailed coverage analysis: what is tested, what is not tested, and architectural reasons.
+
+3. **[Security & Performance Notes](SECURITY_AND_PERFORMANCE_NOTES.md)**
+   - HTTP security headers, rate limiting, B-Tree database indexes, result pagination, and connection pooling.
+
+4. **[Production Deployment Guide](DEPLOYMENT_GUIDE.md)**
    - Step-by-step instructions for deploying to Render with Supabase PostgreSQL connection pooling and SSL configuration.
 
-3. **[Postman Collection](ecommerce_api.postman_collection.json)**
+5. **[Final Case Study & Technical Reflection](FINAL_CASE_STUDY_AND_REFLECTION.md)**
+   - Problem statement, data model, architecture, key decisions, limitations, 3-week reflection, and submission declaration.
+
+6. **[Postman Collection](ecommerce_api.postman_collection.json)**
    - Complete exportable Postman collection for all API endpoints.
