@@ -34,16 +34,16 @@ Track: Backend Development
 - [x] Git release tag `week-2`.
 
 ### Week 3 — Quality and Delivery
-- [ ] Task 3.1 Testing:
+- [x] Task 3.1 Testing:
   - Unit tests for business rules (price, inventory availability).
   - Integration tests for auth, CRUD, and failure modes (`400`, `401`, `403`, `404`).
-  - Single-command test runner (`npm test`) with coverage notes.
-- [ ] Task 3.2 Documentation, Security & Deployment:
-  - Exported Postman collection and complete OpenAPI / Swagger documentation.
-  - Security headers, CORS configuration, and environment variable protection.
-  - Production deployment on Render / Railway with live PostgreSQL connection.
-  - 5-minute recorded video walkthrough and technical reflection.
-- [ ] Git release tag `week-3` and final package submission.
+  - Single-command test runner (`npm test`) with coverage notes (`npm run test:coverage`).
+- [x] Task 3.2 Documentation, Security & Deployment:
+  - Exported Postman collection and complete OpenAPI / Swagger documentation (`/api-docs`).
+  - Security headers (Helmet), rate limiting, CORS configuration, and environment variable protection.
+  - Production deployment guide for Render with live PostgreSQL connection.
+  - 5-minute recorded video walkthrough script and technical reflection.
+- [x] Git release tag `week-3` and final package submission.
 
 ---
 

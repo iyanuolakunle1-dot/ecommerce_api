@@ -1,10 +1,11 @@
-# E-Commerce Inventory & Order API (Week 2)
+# E-Commerce Inventory & Order API (Week 3 — Final)
 
 A clean, robust modular monolithic REST API built with Node.js, Express, and PostgreSQL for small retail merchants to catalog products, authenticate users, and manage orders with atomic stock inventory control.
 
 - **GitHub Repository**: [https://github.com/iyanuolakunle1-dot/ecommerce_api](https://github.com/iyanuolakunle1-dot/ecommerce_api)
 - **Live Deployed API**: [https://ecommerce-api-6abw.onrender.com](https://ecommerce-api-6abw.onrender.com)
-- **Release Tag**: `week-2`
+- **Interactive Swagger Docs**: [http://localhost:3000/api-docs](http://localhost:3000/api-docs) (or on your live deployment)
+- **Release Tag**: `week-3`
 
 ---
 
@@ -12,11 +13,14 @@ A clean, robust modular monolithic REST API built with Node.js, Express, and Pos
 
 All design and submission documents are organized in the [`/docs`](docs) directory:
 
-- [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Product problem, target user, 3 entities, core user flow, and scope.
+- [Idea One-Pager](docs/IDEA_ONE_PAGER.md): Product problem, target user, entities, core flow, and scope.
 - [One-Page Work Plan](docs/WORK_PLAN.md): 3-week deliverables roadmap and risk mitigation strategies.
 - [Task 1.1: Data Model & API Spec](docs/DATA_MODEL_AND_API_SPEC.md): PostgreSQL schema, ERD diagram, and endpoint contracts.
-- [Task 2 Issue Log](docs/ISSUE_LOG.md): 6 detailed entries documenting bugs found, options considered, and how they were solved.
-- [Weekly Update Notes](docs/WEEK2_UPDATE_NOTE.md): Formatted submission note for Week 2.
+- [Task 2 Issue Log](docs/ISSUE_LOG.md): 6 detailed entries documenting resolved bugs and technical decisions.
+- [Production Deployment Guide](docs/DEPLOYMENT_GUIDE.md): Deployment walkthrough for Render with Supabase PostgreSQL.
+- [Postman Collection](docs/ecommerce_api.postman_collection.json): Pre-configured collection for testing all endpoints.
+- [Weekly Update Notes (Week 3)](docs/WEEK3_UPDATE_NOTE.md): Formatted submission note for Week 3 Quality & Delivery.
+- [5-Minute Presentation Script](presentation_notes_week3.txt): Mentor walkthrough guide and Q&A cheat-sheet.
 
 ---
 
@@ -117,9 +121,16 @@ npm run dev
 The server will start listening at `http://localhost:3000`.
 
 ### 6. Run Automated Tests
-Run the single-command automated test runner covering all 23 integration tests across Auth, Products CRUD, Orders, Stock Deduction, and Failure Modes:
+Run the automated test suites covering 47 tests across isolated business rules and full HTTP integration flows:
 ```bash
+# Run all tests (unit + integration)
 npm test
+
+# Run isolated business rules unit tests
+npm run test:unit
+
+# Generate test coverage report
+npm run test:coverage
 ```
 
 ---
